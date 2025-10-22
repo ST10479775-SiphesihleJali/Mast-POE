@@ -8,30 +8,60 @@ import {
   Alert,
   ScrollView,
 } from "react-native";
+// Picker component for dropdown selection
 import { Picker } from "@react-native-picker/picker";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList, MenuItem } from "../App";
 
+/* Code Attribution
+   Author: React Navigation Team
+   Title: Stack Navigator - React Navigation Documentation
+   Date Published: 2024
+   Link/URL: https://reactnavigation.org/docs/stack-navigator/
+   Date Accessed: 2025-10-22
+   Description: Used for implementing navigation patterns and stack navigation structure
+*/
 type AddItemNavProp = StackNavigationProp<RootStackParamList, "AddItem">;
+
+/* Code Attribution
+   Author: React Native Community
+   Title: React Native Picker - @react-native-picker/picker
+   Date Published: 2024
+   Link/URL: https://github.com/react-native-picker/picker
+   Date Accessed: 2025-10-22
+   Description: Used Picker component for dropdown selection of course types
+*/
 
 interface Props {
   navigation: AddItemNavProp;
   addItem: (item: MenuItem) => void;
 }
 
+/* Code Attribution
+   Author: Meta Platforms, Inc.
+   Title: React Native Core Components Documentation
+   Date Published: 2024
+   Link/URL: https://reactnative.dev/docs/components-and-apis
+   Date Accessed: 2025-10-22
+   Description: Used core components including View, Text, TextInput, Button, StyleSheet, Alert, and ScrollView
+*/
+
 export default function AddItemScreen({ navigation, addItem }: Props) {
+  // State management for form inputs
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [price, setPrice] = useState("");
   const [course, setCourse] = useState("");
   const [image, setImage] = useState("");
 
+  // Form submission handler with validation
   const handleSubmit = () => {
     if (!name || !description || !price || !course) {
       Alert.alert("Error", "Please fill in all required fields.");
       return;
     }
 
+    // Create new menu item object
     const newItem: MenuItem = {
       id: Date.now().toString(),
       name,
@@ -51,6 +81,7 @@ export default function AddItemScreen({ navigation, addItem }: Props) {
     <ScrollView style={styles.container}>
       <Text style={styles.header}>Add New Dish</Text>
 
+      {/* Text input for dish name */}
       <TextInput
         style={styles.input}
         placeholder="Dish Name"
@@ -58,6 +89,8 @@ export default function AddItemScreen({ navigation, addItem }: Props) {
         value={name}
         onChangeText={setName}
       />
+      
+      {/* Text input for description */}
       <TextInput
         style={styles.input}
         placeholder="Description"
@@ -65,6 +98,8 @@ export default function AddItemScreen({ navigation, addItem }: Props) {
         value={description}
         onChangeText={setDescription}
       />
+      
+      {/* Numeric input for price */}
       <TextInput
         style={styles.input}
         placeholder="Price (R)"
@@ -73,6 +108,8 @@ export default function AddItemScreen({ navigation, addItem }: Props) {
         value={price}
         onChangeText={setPrice}
       />
+      
+      {/* Optional image URL input */}
       <TextInput
         style={styles.input}
         placeholder="Image URL (optional)"
@@ -81,6 +118,7 @@ export default function AddItemScreen({ navigation, addItem }: Props) {
         onChangeText={setImage}
       />
 
+      {/* Picker component for course selection */}
       <View style={styles.pickerContainer}>
         <Picker
           selectedValue={course}
@@ -100,11 +138,13 @@ export default function AddItemScreen({ navigation, addItem }: Props) {
         </Picker>
       </View>
 
+      {/* Submit button */}
       <Button title="Add Dish" color="#1E90FF" onPress={handleSubmit} />
     </ScrollView>
   );
 }
 
+// Stylesheet for component styling
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: "#121212", padding: 20 },
   header: {
