@@ -1,8 +1,9 @@
 import React, { useEffect, useRef } from "react";
-import { View, Text, Image, StyleSheet, Animated } from "react-native";
+import { View, Text, Image, StyleSheet, Animated, TouchableOpacity, Alert } from "react-native";
 
 interface Props {
   item: {
+    id: string;
     name: string;
     description: string;
     course: string;
@@ -10,6 +11,7 @@ interface Props {
     image?: string;
   };
   index?: number; // Index prop for staggered animation timing
+  onDelete: (id: string) => void; // Callback function to delete item
 }
 
 /* Code Attribution
@@ -21,10 +23,19 @@ interface Props {
    Description: Used Animated.parallel and Animated.timing for staggered card animations with fade and slide effects
 */
 
-export default function MenuItemCard({ item, index = 0 }: Props) {
+export default function MenuItemCard({ item, index = 0, onDelete }: Props) {
   // Animated values for fade and slide effects
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const slideAnim = useRef(new Animated.Value(20)).current;
+
+/* Code Attribution
+   Author: Meta Platforms, Inc.
+   Title: Alert API - React Native Documentation
+   Date Published: 2024
+   Link/URL: https://reactnative.dev/docs/alert
+   Date Accessed: 2025-10-22
+   Description: Used Alert.alert for confirmation dialog before deleting menu items
+*/
 
   // Trigger staggered animations on component mount
   useEffect(() => {
@@ -46,6 +57,25 @@ export default function MenuItemCard({ item, index = 0 }: Props) {
     ]).start();
   }, []);
 
+  // Handle delete button press with confirmation dialog
+  const handleDelete = () => {
+    Alert.alert(
+      "Delete Dish",
+      `Are you sure you want to delete "${item.name}"?`,
+      [
+        {
+          text: "Cancel",
+          style: "cancel",
+        },
+        {
+          text: "Delete",
+          style: "destructive",
+          onPress: () => onDelete(item.id),
+        },
+      ]
+    );
+  };
+
   return (
     <Animated.View
       style={[
@@ -66,6 +96,11 @@ export default function MenuItemCard({ item, index = 0 }: Props) {
         <Text style={styles.course}>{item.course}</Text>
         <Text style={styles.price}>R {item.price.toFixed(2)}</Text>
       </View>
+
+      {/* Delete button */}
+      <TouchableOpacity style={styles.deleteButton} onPress={handleDelete}>
+        <Text style={styles.deleteButtonText}>✕</Text>
+      </TouchableOpacity>
     </Animated.View>
   );
 }
@@ -103,4 +138,18 @@ const styles = StyleSheet.create({
   desc: { color: "#bbb", fontSize: 13, marginVertical: 3 },
   course: { color: "#1E90FF", fontSize: 13 },
   price: { color: "#fff", fontWeight: "bold", marginTop: 5 },
+  deleteButton: {
+    backgroundColor: "#FF4444",
+    width: 30,
+    height: 30,
+    borderRadius: 15,
+    justifyContent: "center",
+    alignItems: "center",
+    alignSelf: "center",
+  },
+  deleteButtonText: {
+    color: "#fff",
+    fontSize: 18,
+    fontWeight: "bold",
+  },
 });

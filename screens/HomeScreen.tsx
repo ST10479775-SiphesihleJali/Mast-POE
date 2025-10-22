@@ -27,6 +27,7 @@ interface Props {
   navigation: HomeNavProp;
   menuItems: MenuItem[];
   addItem: (item: MenuItem) => void;
+  deleteItem: (id: string) => void;
 }
 
 /* Code Attribution
@@ -38,6 +39,10 @@ interface Props {
    Description: Used Animated API for fade-in animations and smooth transitions
 */
 
+export default function HomeScreen({ navigation, menuItems, addItem, deleteItem }: Props) {
+  // Animated value for fade-in effect
+  const fadeAnim = useRef(new Animated.Value(0)).current;
+
 /* Code Attribution
    Author: Meta Platforms, Inc.
    Title: FlatList Component - React Native Documentation
@@ -46,9 +51,6 @@ interface Props {
    Date Accessed: 2025-10-22
    Description: Used FlatList for efficient rendering of menu items list
 */
-export default function HomeScreen({ navigation, menuItems, addItem }: Props) {
-  // Animated value for fade-in effect
-  const fadeAnim = useRef(new Animated.Value(0)).current;
 
   // Fade animation when screen is focused (triggered when returning from Add Item screen)
   useFocusEffect(
@@ -72,7 +74,7 @@ export default function HomeScreen({ navigation, menuItems, addItem }: Props) {
         data={menuItems}
         keyExtractor={(item) => item.id}
         renderItem={({ item, index }) => (
-          <MenuItemCard item={item} index={index} />
+          <MenuItemCard item={item} index={index} onDelete={deleteItem} />
         )}
       />
 

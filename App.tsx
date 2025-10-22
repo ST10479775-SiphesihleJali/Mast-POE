@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import {
@@ -9,6 +8,16 @@ import {
 import WelcomeScreen from "./screens/WelcomeScreen";
 import HomeScreen from "./screens/HomeScreen";
 import AddItemScreen from "./screens/AddItemScreen";
+
+// TypeScript type definitions
+export type MenuItem = {
+  id: string;
+  name: string;
+  description: string;
+  course: string;
+  price: number;
+  image?: string;
+};
 
 /* Code Attribution
    Author: React Navigation Team
@@ -28,16 +37,6 @@ import AddItemScreen from "./screens/AddItemScreen";
    Description: Used NavigationContainer as the wrapper for the navigation tree
 */
 
-// TypeScript type definitions
-export type MenuItem = {
-  id: string;
-  name: string;
-  description: string;
-  course: string;
-  price: number;
-  image?: string;
-};
-
 export type RootStackParamList = {
   Welcome: undefined;
   Home: undefined;
@@ -49,7 +48,7 @@ const Stack = createStackNavigator<RootStackParamList>();
 export default function App() {
   // State to manage menu items with initial data
   const [menuItems, setMenuItems] = useState<MenuItem[]>([
-    {
+     {
       id: "1",
       name: "Roasted Tomato Soup",
       description: "Served with basil oil and cream.",
@@ -65,7 +64,16 @@ export default function App() {
       course: "Mains",
       price: 180,
       image:
-        "https://images.unsplash.com/photo-1617196034796-73b435e3a2d7?auto=format&fit=crop&w=800&q=80",
+        "https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=870",
+    },
+    {
+      id: "3",
+      name: "Crème Brûlée",
+      description: "Classic French dessert with a caramelized sugar top.",
+      course: "Desserts",
+      price: 90,
+      image:
+        "https://images.unsplash.com/photo-1615235739538-95040f341ba8?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=464",
     },
   ]);
 
@@ -81,6 +89,11 @@ export default function App() {
   // Function to add new menu items
   const addItem = (item: MenuItem) => {
     setMenuItems((prev) => [...prev, item]);
+  };
+
+  // Function to delete menu items by id
+  const deleteItem = (id: string) => {
+    setMenuItems((prev) => prev.filter((item) => item.id !== id));
   };
 
   // Shared transition preset for smooth animations
@@ -105,7 +118,7 @@ export default function App() {
         {/* Home screen - displays menu items */}
         <Stack.Screen name="Home" options={{ title: "Christoffel's Menu" }}>
           {(props) => (
-            <HomeScreen {...props} menuItems={menuItems} addItem={addItem} />
+            <HomeScreen {...props} menuItems={menuItems} addItem={addItem} deleteItem={deleteItem} />
           )}
         </Stack.Screen>
         
