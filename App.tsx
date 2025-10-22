@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import {
@@ -9,6 +10,25 @@ import WelcomeScreen from "./screens/WelcomeScreen";
 import HomeScreen from "./screens/HomeScreen";
 import AddItemScreen from "./screens/AddItemScreen";
 
+/* Code Attribution
+   Author: React Navigation Team
+   Title: Stack Navigator with TransitionPresets - React Navigation Documentation
+   Date Published: 2024
+   Link/URL: https://reactnavigation.org/docs/stack-navigator/
+   Date Accessed: 2025-10-22
+   Description: Used for implementing stack navigation with custom transition animations
+*/
+
+/* Code Attribution
+   Author: React Navigation Team
+   Title: NavigationContainer - React Navigation Documentation
+   Date Published: 2024
+   Link/URL: https://reactnavigation.org/docs/navigation-container/
+   Date Accessed: 2025-10-22
+   Description: Used NavigationContainer as the wrapper for the navigation tree
+*/
+
+// TypeScript type definitions
 export type MenuItem = {
   id: string;
   name: string;
@@ -27,6 +47,7 @@ export type RootStackParamList = {
 const Stack = createStackNavigator<RootStackParamList>();
 
 export default function App() {
+  // State to manage menu items with initial data
   const [menuItems, setMenuItems] = useState<MenuItem[]>([
     {
       id: "1",
@@ -48,32 +69,47 @@ export default function App() {
     },
   ]);
 
+/* Code Attribution
+   Author: Unsplash
+   Title: Free Stock Photos
+   Date Published: 2024
+   Link/URL: https://unsplash.com/
+   Date Accessed: 2025-10-22
+   Description: Used Unsplash image URLs for default menu item images
+*/
+
+  // Function to add new menu items
   const addItem = (item: MenuItem) => {
     setMenuItems((prev) => [...prev, item]);
   };
 
-  // ✨ Shared transition preset
+  // Shared transition preset for smooth animations
   const screenOptions: StackNavigationOptions = {
     headerStyle: { backgroundColor: "#121212" },
     headerTintColor: "#fff",
     cardStyle: { backgroundColor: "#121212" },
     gestureEnabled: true,
-    ...TransitionPresets.ModalSlideFromBottomIOS, // smooth slide + fade animation
+    ...TransitionPresets.ModalSlideFromBottomIOS, // Smooth slide + fade animation
   };
 
   return (
     <NavigationContainer>
       <Stack.Navigator screenOptions={screenOptions}>
+        {/* Welcome screen - first screen shown to users */}
         <Stack.Screen
           name="Welcome"
           component={WelcomeScreen}
           options={{ headerShown: false }}
         />
-        <Stack.Screen name="Home" options={{ title: "Christoffel’s Menu" }}>
+        
+        {/* Home screen - displays menu items */}
+        <Stack.Screen name="Home" options={{ title: "Christoffel's Menu" }}>
           {(props) => (
             <HomeScreen {...props} menuItems={menuItems} addItem={addItem} />
           )}
         </Stack.Screen>
+        
+        {/* Add Item screen - form to add new menu items */}
         <Stack.Screen
           name="AddItem"
           options={{ title: "Add Menu Item" }}
