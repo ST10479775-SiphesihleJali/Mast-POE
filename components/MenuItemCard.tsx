@@ -9,25 +9,38 @@ interface Props {
     price: number;
     image?: string;
   };
-  index?: number; // New prop for staggered animation
+  index?: number; // Index prop for staggered animation timing
 }
 
+/* Code Attribution
+   Author: Meta Platforms, Inc.
+   Title: Animated API - Parallel and Timing Methods
+   Date Published: 2024
+   Link/URL: https://reactnative.dev/docs/animated
+   Date Accessed: 2025-10-22
+   Description: Used Animated.parallel and Animated.timing for staggered card animations with fade and slide effects
+*/
+
 export default function MenuItemCard({ item, index = 0 }: Props) {
+  // Animated values for fade and slide effects
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const slideAnim = useRef(new Animated.Value(20)).current;
 
+  // Trigger staggered animations on component mount
   useEffect(() => {
     Animated.parallel([
+      // Fade-in animation
       Animated.timing(fadeAnim, {
         toValue: 1,
         duration: 600,
-        delay: index * 150, // Add delay for each card
+        delay: index * 150, // Staggered delay based on card index
         useNativeDriver: true,
       }),
+      // Slide-up animation
       Animated.timing(slideAnim, {
         toValue: 0,
         duration: 600,
-        delay: index * 150,
+        delay: index * 150, // Staggered delay based on card index
         useNativeDriver: true,
       }),
     ]).start();
@@ -43,7 +56,10 @@ export default function MenuItemCard({ item, index = 0 }: Props) {
         },
       ]}
     >
+      {/* Display menu item image if available */}
       {item.image && <Image source={{ uri: item.image }} style={styles.image} />}
+      
+      {/* Menu item details */}
       <View style={styles.textContainer}>
         <Text style={styles.title}>{item.name}</Text>
         <Text style={styles.desc}>{item.description}</Text>
@@ -54,6 +70,16 @@ export default function MenuItemCard({ item, index = 0 }: Props) {
   );
 }
 
+/* Code Attribution
+   Author: Meta Platforms, Inc.
+   Title: Image Component - React Native Documentation
+   Date Published: 2024
+   Link/URL: https://reactnative.dev/docs/image
+   Date Accessed: 2025-10-22
+   Description: Used Image component to display menu item photos
+*/
+
+// Stylesheet for card component styling
 const styles = StyleSheet.create({
   card: {
     backgroundColor: "#1E1E1E",
