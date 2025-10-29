@@ -65,8 +65,6 @@ export default function FilterScreen({ navigation, menuItems }: Props) {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.header}>Filter by Course</Text>
-
       {/* Filter buttons */}
       <View style={styles.filterContainer}>
         {courses.map((course) => (
@@ -131,13 +129,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#121212",
     padding: 20,
-  },
-  header: {
-    color: "#fff",
-    fontSize: 24,
-    fontWeight: "bold",
-    textAlign: "center",
-    marginBottom: 20,
+    paddingTop: 10,
   },
   filterContainer: {
     flexDirection: "row",
