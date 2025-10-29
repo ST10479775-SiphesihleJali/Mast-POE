@@ -53,8 +53,9 @@ const Stack = createStackNavigator<RootStackParamList>();
 const STORAGE_KEY = '@menu_items';
 
 export default function App() {
-  // State to manage menu items with initial data
+  // State to manage menu items with initial data - 3 starters, 3 mains, 3 desserts
   const [menuItems, setMenuItems] = useState<MenuItem[]>([
+    // Starters
     {
       id: "1",
       name: "Roasted Tomato Soup",
@@ -66,21 +67,77 @@ export default function App() {
     },
     {
       id: "2",
+      name: "Bruschetta Trio",
+      description: "Toasted bread with tomato, olive tapenade, and mushroom.",
+      course: "Starters",
+      price: 75,
+      image:
+        "https://images.unsplash.com/photo-1572695157366-5e585ab2b69f?auto=format&fit=crop&w=800&q=80",
+    },
+    {
+      id: "3",
+      name: "Caesar Salad",
+      description: "Crisp romaine with parmesan, croutons, and anchovy dressing.",
+      course: "Starters",
+      price: 95,
+      image:
+        "https://images.unsplash.com/photo-1546793665-c74683f339c1?auto=format&fit=crop&w=800&q=80",
+    },
+    // Mains
+    {
+      id: "4",
       name: "Grilled Salmon",
-      description: "Fresh salmon with lemon butter sauce.",
+      description: "Fresh salmon with lemon butter sauce and seasonal vegetables.",
       course: "Mains",
       price: 180,
       image:
         "https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=870",
     },
     {
-      id: "3",
+      id: "5",
+      name: "Beef Fillet",
+      description: "Tender beef fillet with red wine jus and truffle mash.",
+      course: "Mains",
+      price: 245,
+      image:
+        "https://images.unsplash.com/photo-1558030006-450675393462?auto=format&fit=crop&w=800&q=80",
+    },
+    {
+      id: "6",
+      name: "Chicken Supreme",
+      description: "Pan-seared chicken breast with mushroom cream sauce.",
+      course: "Mains",
+      price: 165,
+      image:
+        "https://images.unsplash.com/photo-1598103442097-8b74394b95c6?auto=format&fit=crop&w=800&q=80",
+    },
+    // Desserts
+    {
+      id: "7",
       name: "Crème Brûlée",
       description: "Classic French dessert with a caramelized sugar top.",
       course: "Desserts",
       price: 90,
       image:
         "https://images.unsplash.com/photo-1615235739538-95040f341ba8?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=464",
+    },
+    {
+      id: "8",
+      name: "Chocolate Fondant",
+      description: "Warm chocolate cake with molten center and vanilla ice cream.",
+      course: "Desserts",
+      price: 105,
+      image:
+        "https://images.unsplash.com/photo-1624353365286-3f8d62daad51?auto=format&fit=crop&w=800&q=80",
+    },
+    {
+      id: "9",
+      name: "Lemon Tart",
+      description: "Tangy lemon curd in a buttery pastry shell with meringue.",
+      course: "Desserts",
+      price: 85,
+      image:
+        "https://images.unsplash.com/photo-1519915212116-7cfef71f1d3e?auto=format&fit=crop&w=800&q=80",
     },
   ]);
 
