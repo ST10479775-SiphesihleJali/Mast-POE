@@ -233,7 +233,7 @@ export default function App() {
         {/* Filter screen - allows guests to filter menu by course */}
         <Stack.Screen
           name="Filter"
-          options={{ title: "Filter Menu" }}
+          options={{ headerShown: false }}
         >
           {(props) => <FilterScreen {...props} menuItems={menuItems} />}
         </Stack.Screen>
