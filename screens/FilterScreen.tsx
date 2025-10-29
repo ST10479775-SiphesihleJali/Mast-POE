@@ -65,6 +65,21 @@ export default function FilterScreen({ navigation, menuItems }: Props) {
 
   return (
     <View style={styles.container}>
+      {/* Custom header with back button */}
+      <View style={styles.header}>
+        <TouchableOpacity
+          style={styles.backButton}
+          onPress={() => navigation.goBack()}
+          accessible={true}
+          accessibilityLabel="Go back"
+          accessibilityRole="button"
+        >
+          <Text style={styles.backButtonText}>← Back</Text>
+        </TouchableOpacity>
+        <Text style={styles.headerTitle}>Filter Menu</Text>
+        <View style={styles.headerSpacer} />
+      </View>
+
       {/* Filter buttons */}
       <View style={styles.filterContainer}>
         {courses.map((course) => (
@@ -101,6 +116,7 @@ export default function FilterScreen({ navigation, menuItems }: Props) {
       <FlatList
         data={filteredItems}
         keyExtractor={(item) => item.id}
+        contentContainerStyle={styles.listContent}
         renderItem={({ item, index }) => (
           <MenuItemCard 
             item={item} 
@@ -128,13 +144,39 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#121212",
-    padding: 20,
-    paddingTop: 10,
+  },
+  header: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingHorizontal: 20,
+    paddingTop: 50,
+    paddingBottom: 15,
+    backgroundColor: "#121212",
+  },
+  backButton: {
+    padding: 5,
+  },
+  backButtonText: {
+    color: "#1E90FF",
+    fontSize: 16,
+    fontWeight: "600",
+  },
+  headerTitle: {
+    color: "#fff",
+    fontSize: 20,
+    fontWeight: "bold",
+    flex: 1,
+    textAlign: "center",
+  },
+  headerSpacer: {
+    width: 50, // Balance the back button width
   },
   filterContainer: {
     flexDirection: "row",
     flexWrap: "wrap",
     justifyContent: "space-between",
+    marginHorizontal: 20,
     marginBottom: 15,
     gap: 10,
   },
@@ -167,6 +209,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
     fontSize: 14,
     marginBottom: 15,
+    marginHorizontal: 20,
     fontStyle: "italic",
   },
   emptyContainer: {
@@ -182,5 +225,8 @@ const styles = StyleSheet.create({
   emptySubtext: {
     color: "#999",
     fontSize: 14,
+  },
+  listContent: {
+    paddingHorizontal: 20,
   },
 });
