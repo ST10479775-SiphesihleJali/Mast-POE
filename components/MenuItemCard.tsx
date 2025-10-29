@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from "react";
-import { View, Text, Image, StyleSheet, Animated, TouchableOpacity, Alert } from "react-native";
+import { View, Text, Image, StyleSheet, Animated, TouchableOpacity, Alert, Platform } from "react-native";
 
 interface Props {
   item: {
@@ -19,43 +19,56 @@ interface Props {
    Title: Animated API - Parallel and Timing Methods
    Date Published: 2024
    Link/URL: https://reactnative.dev/docs/animated
-   Date Accessed: 2025-10-22
+   Date Accessed: 2024-10-22
    Description: Used Animated.parallel and Animated.timing for staggered card animations with fade and slide effects
 */
+
+// Animation configuration constants
+const ANIMATION_CONFIG = {
+  DURATION: 600,
+  STAGGER_DELAY: 150,
+};
 
 export default function MenuItemCard({ item, index = 0, onDelete }: Props) {
   // Animated values for fade and slide effects
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const slideAnim = useRef(new Animated.Value(20)).current;
 
-/* Code Attribution
-   Author: Meta Platforms, Inc.
-   Title: Alert API - React Native Documentation
-   Date Published: 2024
-   Link/URL: https://reactnative.dev/docs/alert
-   Date Accessed: 2025-10-22
-   Description: Used Alert.alert for confirmation dialog before deleting menu items
-*/
+  /* Code Attribution
+     Author: Meta Platforms, Inc.
+     Title: Alert API - React Native Documentation
+     Date Published: 2024
+     Link/URL: https://reactnative.dev/docs/alert
+     Date Accessed: 2024-10-22
+     Description: Used Alert.alert for confirmation dialog before deleting menu items
+  */
 
   // Trigger staggered animations on component mount
   useEffect(() => {
-    Animated.parallel([
+    const animation = Animated.parallel([
       // Fade-in animation
       Animated.timing(fadeAnim, {
         toValue: 1,
-        duration: 600,
-        delay: index * 150, // Staggered delay based on card index
+        duration: ANIMATION_CONFIG.DURATION,
+        delay: index * ANIMATION_CONFIG.STAGGER_DELAY, // Staggered delay based on card index
         useNativeDriver: true,
       }),
       // Slide-up animation
       Animated.timing(slideAnim, {
         toValue: 0,
-        duration: 600,
-        delay: index * 150, // Staggered delay based on card index
+        duration: ANIMATION_CONFIG.DURATION,
+        delay: index * ANIMATION_CONFIG.STAGGER_DELAY, // Staggered delay based on card index
         useNativeDriver: true,
       }),
-    ]).start();
-  }, []);
+    ]);
+
+    animation.start();
+
+    // Cleanup function to stop animations on unmount
+    return () => {
+      animation.stop();
+    };
+  }, [fadeAnim, slideAnim, index]);
 
   // Handle delete button press with confirmation dialog
   const handleDelete = () => {
@@ -87,18 +100,33 @@ export default function MenuItemCard({ item, index = 0, onDelete }: Props) {
       ]}
     >
       {/* Display menu item image if available */}
-      {item.image && <Image source={{ uri: item.image }} style={styles.image} />}
+      {item.image && (
+        <Image 
+          source={{ uri: item.image }} 
+          style={styles.image}
+          onError={(e) => console.log('Image load error:', e.nativeEvent.error)}
+        />
+      )}
       
       {/* Menu item details */}
       <View style={styles.textContainer}>
         <Text style={styles.title}>{item.name}</Text>
         <Text style={styles.desc}>{item.description}</Text>
         <Text style={styles.course}>{item.course}</Text>
-        <Text style={styles.price}>R {item.price.toFixed(2)}</Text>
+        <Text style={styles.price}>
+          R {item.price.toLocaleString('en-ZA', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+        </Text>
       </View>
 
       {/* Delete button */}
-      <TouchableOpacity style={styles.deleteButton} onPress={handleDelete}>
+      <TouchableOpacity 
+        style={styles.deleteButton} 
+        onPress={handleDelete}
+        accessible={true}
+        accessibilityLabel={`Delete ${item.name}`}
+        accessibilityRole="button"
+        accessibilityHint="Double tap to delete this dish"
+      >
         <Text style={styles.deleteButtonText}>✕</Text>
       </TouchableOpacity>
     </Animated.View>
@@ -110,7 +138,7 @@ export default function MenuItemCard({ item, index = 0, onDelete }: Props) {
    Title: Image Component - React Native Documentation
    Date Published: 2024
    Link/URL: https://reactnative.dev/docs/image
-   Date Accessed: 2025-10-22
+   Date Accessed: 2024-10-22
    Description: Used Image component to display menu item photos
 */
 
@@ -123,9 +151,16 @@ const styles = StyleSheet.create({
     padding: 10,
     flexDirection: "row",
     shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.3,
-    shadowRadius: 4,
+    ...Platform.select({
+      ios: {
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.3,
+        shadowRadius: 4,
+      },
+      android: {
+        elevation: 4,
+      },
+    }),
   },
   image: {
     width: 90,

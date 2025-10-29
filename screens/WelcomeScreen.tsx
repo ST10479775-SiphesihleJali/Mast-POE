@@ -14,7 +14,7 @@ interface Props {
    Title: ImageBackground Component - React Native Documentation
    Date Published: 2024
    Link/URL: https://reactnative.dev/docs/imagebackground
-   Date Accessed: 2025-10-22
+   Date Accessed: 2024-10-22
    Description: Used ImageBackground component for creating welcome screen with background image
 */
 export default function WelcomeScreen({ navigation }: Props) {
@@ -35,6 +35,10 @@ export default function WelcomeScreen({ navigation }: Props) {
         <TouchableOpacity
           style={styles.button}
           onPress={() => navigation.navigate("Home")}
+          accessible={true}
+          accessibilityLabel="Enter menu"
+          accessibilityRole="button"
+          accessibilityHint="Navigate to the menu screen"
         >
           <Text style={styles.buttonText}>Enter Menu</Text>
         </TouchableOpacity>
@@ -48,7 +52,7 @@ export default function WelcomeScreen({ navigation }: Props) {
    Title: Free Stock Photos
    Date Published: 2024
    Link/URL: https://unsplash.com/
-   Date Accessed: 2025-10-22
+   Date Accessed: 2024-10-22
    Description: Used Unsplash image for welcome screen background
 */
 

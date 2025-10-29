@@ -11,14 +11,14 @@ import {
 // Picker component for dropdown selection
 import { Picker } from "@react-native-picker/picker";
 import { StackNavigationProp } from "@react-navigation/stack";
-import { RootStackParamList, MenuItem } from "../App";
+import { RootStackParamList, MenuItem, CourseType } from "../App";
 
 /* Code Attribution
    Author: React Navigation Team
    Title: Stack Navigator - React Navigation Documentation
    Date Published: 2024
    Link/URL: https://reactnavigation.org/docs/stack-navigator/
-   Date Accessed: 2025-10-22
+   Date Accessed: 2024-10-22
    Description: Used for implementing navigation patterns and stack navigation structure
 */
 type AddItemNavProp = StackNavigationProp<RootStackParamList, "AddItem">;
@@ -28,7 +28,7 @@ type AddItemNavProp = StackNavigationProp<RootStackParamList, "AddItem">;
    Title: React Native Picker - @react-native-picker/picker
    Date Published: 2024
    Link/URL: https://github.com/react-native-picker/picker
-   Date Accessed: 2025-10-22
+   Date Accessed: 2024-10-22
    Description: Used Picker component for dropdown selection of course types
 */
 
@@ -42,35 +42,63 @@ interface Props {
    Title: React Native Core Components Documentation
    Date Published: 2024
    Link/URL: https://reactnative.dev/docs/components-and-apis
-   Date Accessed: 2025-10-22
+   Date Accessed: 2024-10-22
    Description: Used core components including View, Text, TextInput, Button, StyleSheet, Alert, and ScrollView
 */
+
+// Helper function to validate image URLs
+const isValidUrl = (url: string): boolean => {
+  if (!url) return true; // Empty URL is valid (will use default)
+  try {
+    const urlObj = new URL(url);
+    return urlObj.protocol === 'http:' || urlObj.protocol === 'https:';
+  } catch {
+    return false;
+  }
+};
 
 export default function AddItemScreen({ navigation, addItem }: Props) {
   // State management for form inputs
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [price, setPrice] = useState("");
-  const [course, setCourse] = useState("");
+  const [course, setCourse] = useState<CourseType | "">("");
   const [image, setImage] = useState("");
 
   // Form submission handler with validation
   const handleSubmit = () => {
-    if (!name || !description || !price || !course) {
+    // Trim all text inputs
+    const trimmedName = name.trim();
+    const trimmedDescription = description.trim();
+    const trimmedImage = image.trim();
+
+    // Check required fields
+    if (!trimmedName || !trimmedDescription || !price || !course) {
       Alert.alert("Error", "Please fill in all required fields.");
       return;
     }
 
-    // Create new menu item object
+    // Validate price
+    const parsedPrice = parseFloat(price);
+    if (isNaN(parsedPrice) || parsedPrice <= 0) {
+      Alert.alert("Error", "Please enter a valid price greater than 0.");
+      return;
+    }
+
+    // Validate image URL if provided
+    if (trimmedImage && !isValidUrl(trimmedImage)) {
+      Alert.alert("Error", "Please enter a valid image URL (starting with http:// or https://).");
+      return;
+    }
+
+    // Create new menu item object with improved ID generation
     const newItem: MenuItem = {
-      id: Date.now().toString(),
-      name,
-      description,
-      course,
-      price: parseFloat(price),
-      image:
-        image ||
-        "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=800&q=80",
+      id: `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+      name: trimmedName,
+      description: trimmedDescription,
+      course: course as CourseType,
+      price: parsedPrice,
+      image: trimmedImage || "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=800&q=80",
     };
 
     addItem(newItem);
@@ -122,7 +150,7 @@ export default function AddItemScreen({ navigation, addItem }: Props) {
       <View style={styles.pickerContainer}>
         <Picker
           selectedValue={course}
-          onValueChange={(val) => setCourse(val)}
+          onValueChange={(val) => setCourse(val as CourseType | "")}
           dropdownIconColor="#1E90FF"
           style={styles.picker}
         >

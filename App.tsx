@@ -1,20 +1,24 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import {
   createStackNavigator,
   TransitionPresets,
   StackNavigationOptions,
 } from "@react-navigation/stack";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import WelcomeScreen from "./screens/WelcomeScreen";
 import HomeScreen from "./screens/HomeScreen";
 import AddItemScreen from "./screens/AddItemScreen";
+import FilterScreen from "./screens/FilterScreen";
 
 // TypeScript type definitions
+export type CourseType = 'Starters' | 'Mains' | 'Desserts';
+
 export type MenuItem = {
   id: string;
   name: string;
   description: string;
-  course: string;
+  course: CourseType;
   price: number;
   image?: string;
 };
@@ -24,7 +28,7 @@ export type MenuItem = {
    Title: Stack Navigator with TransitionPresets - React Navigation Documentation
    Date Published: 2024
    Link/URL: https://reactnavigation.org/docs/stack-navigator/
-   Date Accessed: 2025-10-22
+   Date Accessed: 2024-10-22
    Description: Used for implementing stack navigation with custom transition animations
 */
 
@@ -33,7 +37,7 @@ export type MenuItem = {
    Title: NavigationContainer - React Navigation Documentation
    Date Published: 2024
    Link/URL: https://reactnavigation.org/docs/navigation-container/
-   Date Accessed: 2025-10-22
+   Date Accessed: 2024-10-22
    Description: Used NavigationContainer as the wrapper for the navigation tree
 */
 
@@ -41,14 +45,17 @@ export type RootStackParamList = {
   Welcome: undefined;
   Home: undefined;
   AddItem: undefined;
+  Filter: undefined;
 };
 
 const Stack = createStackNavigator<RootStackParamList>();
 
+const STORAGE_KEY = '@menu_items';
+
 export default function App() {
   // State to manage menu items with initial data
   const [menuItems, setMenuItems] = useState<MenuItem[]>([
-     {
+    {
       id: "1",
       name: "Roasted Tomato Soup",
       description: "Served with basil oil and cream.",
@@ -77,14 +84,50 @@ export default function App() {
     },
   ]);
 
-/* Code Attribution
-   Author: Unsplash
-   Title: Free Stock Photos
-   Date Published: 2024
-   Link/URL: https://unsplash.com/
-   Date Accessed: 2025-10-22
-   Description: Used Unsplash image URLs for default menu item images
-*/
+  /* Code Attribution
+     Author: Unsplash
+     Title: Free Stock Photos
+     Date Published: 2024
+     Link/URL: https://unsplash.com/
+     Date Accessed: 2024-10-22
+     Description: Used Unsplash image URLs for default menu item images
+  */
+
+  /* Code Attribution
+     Author: React Native Community
+     Title: AsyncStorage - React Native Async Storage
+     Date Published: 2024
+     Link/URL: https://react-native-async-storage.github.io/async-storage/
+     Date Accessed: 2024-10-22
+     Description: Used AsyncStorage for persisting menu items data locally
+  */
+
+  // Load items from storage on mount
+  useEffect(() => {
+    const loadItems = async () => {
+      try {
+        const stored = await AsyncStorage.getItem(STORAGE_KEY);
+        if (stored) {
+          setMenuItems(JSON.parse(stored));
+        }
+      } catch (error) {
+        console.error('Error loading items:', error);
+      }
+    };
+    loadItems();
+  }, []);
+
+  // Save items to storage whenever they change
+  useEffect(() => {
+    const saveItems = async () => {
+      try {
+        await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(menuItems));
+      } catch (error) {
+        console.error('Error saving items:', error);
+      }
+    };
+    saveItems();
+  }, [menuItems]);
 
   // Function to add new menu items
   const addItem = (item: MenuItem) => {
@@ -118,7 +161,7 @@ export default function App() {
         {/* Home screen - displays menu items */}
         <Stack.Screen name="Home" options={{ title: "Christoffel's Menu" }}>
           {(props) => (
-            <HomeScreen {...props} menuItems={menuItems} addItem={addItem} deleteItem={deleteItem} />
+            <HomeScreen {...props} menuItems={menuItems} deleteItem={deleteItem} />
           )}
         </Stack.Screen>
         
@@ -128,6 +171,14 @@ export default function App() {
           options={{ title: "Add Menu Item" }}
         >
           {(props) => <AddItemScreen {...props} addItem={addItem} />}
+        </Stack.Screen>
+
+        {/* Filter screen - allows guests to filter menu by course */}
+        <Stack.Screen
+          name="Filter"
+          options={{ title: "Filter Menu" }}
+        >
+          {(props) => <FilterScreen {...props} menuItems={menuItems} />}
         </Stack.Screen>
       </Stack.Navigator>
     </NavigationContainer>
