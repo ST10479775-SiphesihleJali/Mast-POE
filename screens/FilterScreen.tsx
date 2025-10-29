@@ -177,7 +177,8 @@ const styles = StyleSheet.create({
     flexWrap: "wrap",
     justifyContent: "space-between",
     marginHorizontal: 20,
-    marginBottom: 15,
+    marginTop: 10,
+    marginBottom: 20,
     gap: 10,
   },
   filterButton: {
@@ -208,7 +209,7 @@ const styles = StyleSheet.create({
     color: "#1E90FF",
     textAlign: "center",
     fontSize: 14,
-    marginBottom: 15,
+    marginBottom: 20,
     marginHorizontal: 20,
     fontStyle: "italic",
   },
@@ -228,5 +229,6 @@ const styles = StyleSheet.create({
   },
   listContent: {
     paddingHorizontal: 20,
+    paddingBottom: 20,
   },
 });
