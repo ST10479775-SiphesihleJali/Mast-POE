@@ -163,6 +163,10 @@ export default function App() {
   useEffect(() => {
     const loadItems = async () => {
       try {
+        // TEMPORARY: Clear storage to reset to initial 9 dishes
+        // Remove this line after first run
+        await AsyncStorage.removeItem(STORAGE_KEY);
+        
         const stored = await AsyncStorage.getItem(STORAGE_KEY);
         if (stored) {
           const parsedItems = JSON.parse(stored);
