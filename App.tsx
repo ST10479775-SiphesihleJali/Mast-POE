@@ -163,6 +163,7 @@ export default function App() {
   useEffect(() => {
     const loadItems = async () => {
       try {
+        
         const stored = await AsyncStorage.getItem(STORAGE_KEY);
         if (stored) {
           const parsedItems = JSON.parse(stored);
@@ -200,65 +201,44 @@ export default function App() {
     setMenuItems((prev) => prev.filter((item) => item.id !== id));
   };
 
-  // Default screen options with shared styling
-  const defaultScreenOptions: StackNavigationOptions = {
+  // Shared transition preset for smooth animations
+  const screenOptions: StackNavigationOptions = {
     headerStyle: { backgroundColor: "#121212" },
     headerTintColor: "#fff",
     cardStyle: { backgroundColor: "#121212" },
     gestureEnabled: true,
+    ...TransitionPresets.ModalSlideFromBottomIOS, // Smooth slide + fade animation
   };
 
   return (
     <NavigationContainer>
-      <Stack.Navigator screenOptions={defaultScreenOptions}>
-        {/* Welcome screen - first screen with fade transition */}
+      <Stack.Navigator screenOptions={screenOptions}>
+        {/* Welcome screen - first screen shown to users */}
         <Stack.Screen
           name="Welcome"
           component={WelcomeScreen}
-          options={{ 
-            headerShown: false,
-            ...TransitionPresets.FadeFromBottomAndroid, // Elegant fade-in
-          }}
+          options={{ headerShown: false }}
         />
         
-        {/* Home screen - displays menu items with slide from right */}
-        <Stack.Screen 
-          name="Home" 
-          options={{ 
-            title: "Christoffel's Menu",
-            ...TransitionPresets.SlideFromRightIOS, // Native slide from right
-            gestureEnabled: true,
-            gestureDirection: 'horizontal',
-          }}
-        >
+        {/* Home screen - displays menu items */}
+        <Stack.Screen name="Home" options={{ title: "Christoffel's Menu" }}>
           {(props) => (
             <HomeScreen {...props} menuItems={menuItems} deleteItem={deleteItem} />
           )}
         </Stack.Screen>
         
-        {/* Add Item screen - modal slide up from bottom */}
+        {/* Add Item screen - form to add new menu items */}
         <Stack.Screen
           name="AddItem"
-          options={{ 
-            title: "Add Menu Item",
-            ...TransitionPresets.ModalSlideFromBottomIOS, // Modal slide up
-            presentation: 'modal',
-            gestureEnabled: true,
-            gestureDirection: 'vertical',
-          }}
+          options={{ title: "Add Menu Item" }}
         >
           {(props) => <AddItemScreen {...props} addItem={addItem} />}
         </Stack.Screen>
 
-        {/* Filter screen - slide from right */}
+        {/* Filter screen - allows guests to filter menu by course */}
         <Stack.Screen
           name="Filter"
-          options={{ 
-            headerShown: false,
-            ...TransitionPresets.SlideFromRightIOS, // Smooth slide from right
-            gestureEnabled: true,
-            gestureDirection: 'horizontal',
-          }}
+          options={{ headerShown: false }}
         >
           {(props) => <FilterScreen {...props} menuItems={menuItems} />}
         </Stack.Screen>
