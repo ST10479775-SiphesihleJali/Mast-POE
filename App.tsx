@@ -165,7 +165,11 @@ export default function App() {
       try {
         const stored = await AsyncStorage.getItem(STORAGE_KEY);
         if (stored) {
-          setMenuItems(JSON.parse(stored));
+          const parsedItems = JSON.parse(stored);
+          // Only load from storage if it has items, otherwise keep initial data
+          if (parsedItems && parsedItems.length > 0) {
+            setMenuItems(parsedItems);
+          }
         }
       } catch (error) {
         console.error('Error loading items:', error);
