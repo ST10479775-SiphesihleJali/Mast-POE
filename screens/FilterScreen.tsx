@@ -47,7 +47,6 @@ export default function FilterScreen({ navigation, menuItems }: Props) {
     
     const filteredItems: MenuItem[] = [];
     
-    // Use for...in loop to iterate through menuItems
     for (const index in menuItems) {
       const item = menuItems[index];
       if (item.course === selectedCourse) {
@@ -60,7 +59,6 @@ export default function FilterScreen({ navigation, menuItems }: Props) {
 
   const filteredItems = getFilteredItems();
 
-  // Course filter buttons
   const courses: (CourseType | "All")[] = ["All", "Starters", "Mains", "Desserts"];
 
   return (
@@ -76,11 +74,13 @@ export default function FilterScreen({ navigation, menuItems }: Props) {
         >
           <Text style={styles.backButtonText}>← Back</Text>
         </TouchableOpacity>
+
         <Text style={styles.headerTitle}>Filter Menu</Text>
+
         <View style={styles.headerSpacer} />
       </View>
 
-      {/* Filter buttons */}
+      {/* Filter buttons (updated to 2-column layout) */}
       <View style={styles.filterContainer}>
         {courses.map((course) => (
           <TouchableOpacity
@@ -109,7 +109,8 @@ export default function FilterScreen({ navigation, menuItems }: Props) {
 
       {/* Display filtered count */}
       <Text style={styles.resultCount}>
-        Showing {filteredItems.length} {selectedCourse === "All" ? "dishes" : selectedCourse.toLowerCase()}
+        Showing {filteredItems.length}{" "}
+        {selectedCourse === "All" ? "dishes" : selectedCourse.toLowerCase()}
       </Text>
 
       {/* FlatList for filtered menu items */}
@@ -121,15 +122,15 @@ export default function FilterScreen({ navigation, menuItems }: Props) {
           <MenuItemCard 
             item={item} 
             index={index} 
-            onDelete={() => {}} // Read-only view, no delete on filter screen
+            onDelete={() => {}}
           />
         )}
         ListEmptyComponent={
           <View style={styles.emptyContainer}>
             <Text style={styles.emptyText}>No dishes found</Text>
             <Text style={styles.emptySubtext}>
-              {selectedCourse === "All" 
-                ? "No menu items available" 
+              {selectedCourse === "All"
+                ? "No menu items available"
                 : `No ${selectedCourse.toLowerCase()} available`}
             </Text>
           </View>
@@ -170,8 +171,10 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   headerSpacer: {
-    width: 50, // Balance the back button width
+    width: 50,
   },
+
+  /* UPDATED FILTER LAYOUT – TWO COLUMN GRID */
   filterContainer: {
     flexDirection: "row",
     flexWrap: "wrap",
@@ -179,32 +182,35 @@ const styles = StyleSheet.create({
     marginHorizontal: 20,
     marginTop: 10,
     marginBottom: 20,
-    gap: 10,
   },
+
   filterButton: {
-    flex: 1,
-    minWidth: "45%",
+    width: "48%",
     backgroundColor: "#1E1E1E",
-    paddingVertical: 12,
-    paddingHorizontal: 15,
-    borderRadius: 25,
+    paddingVertical: 18,
+    borderRadius: 20,
     borderWidth: 2,
     borderColor: "#333",
     alignItems: "center",
+    marginBottom: 15,
   },
+
   filterButtonActive: {
     backgroundColor: "#1E90FF",
     borderColor: "#1E90FF",
   },
+
   filterButtonText: {
     color: "#999",
-    fontSize: 14,
+    fontSize: 15,
     fontWeight: "600",
   },
+
   filterButtonTextActive: {
     color: "#fff",
-    fontWeight: "bold",
+    fontWeight: "700",
   },
+
   resultCount: {
     color: "#1E90FF",
     textAlign: "center",
