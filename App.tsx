@@ -137,7 +137,7 @@ export default function App() {
       course: "Desserts",
       price: 85,
       image:
-        "https://images.unsplash.com/photo-1519915212116-7cfef71f1d3e?auto=format&fit=crop&w=800&q=80",
+        "https://images.unsplash.com/photo-1543508185-225c92847541?q=80&w=870&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
     },
   ]);
 
@@ -201,44 +201,65 @@ export default function App() {
     setMenuItems((prev) => prev.filter((item) => item.id !== id));
   };
 
-  // Shared transition preset for smooth animations
-  const screenOptions: StackNavigationOptions = {
+  // Default screen options with shared styling
+  const defaultScreenOptions: StackNavigationOptions = {
     headerStyle: { backgroundColor: "#121212" },
     headerTintColor: "#fff",
     cardStyle: { backgroundColor: "#121212" },
     gestureEnabled: true,
-    ...TransitionPresets.ModalSlideFromBottomIOS, // Smooth slide + fade animation
   };
 
   return (
     <NavigationContainer>
-      <Stack.Navigator screenOptions={screenOptions}>
-        {/* Welcome screen - first screen shown to users */}
+      <Stack.Navigator screenOptions={defaultScreenOptions}>
+        {/* Welcome screen - first screen with fade transition */}
         <Stack.Screen
           name="Welcome"
           component={WelcomeScreen}
-          options={{ headerShown: false }}
+          options={{ 
+            headerShown: false,
+            ...TransitionPresets.FadeFromBottomAndroid, // Elegant fade-in
+          }}
         />
         
-        {/* Home screen - displays menu items */}
-        <Stack.Screen name="Home" options={{ title: "Christoffel's Menu" }}>
+        {/* Home screen - displays menu items with slide from right */}
+        <Stack.Screen 
+          name="Home" 
+          options={{ 
+            title: "Christoffel's Menu",
+            ...TransitionPresets.SlideFromRightIOS, // Native slide from right
+            gestureEnabled: true,
+            gestureDirection: 'horizontal',
+          }}
+        >
           {(props) => (
             <HomeScreen {...props} menuItems={menuItems} deleteItem={deleteItem} />
           )}
         </Stack.Screen>
         
-        {/* Add Item screen - form to add new menu items */}
+        {/* Add Item screen - modal slide up from bottom */}
         <Stack.Screen
           name="AddItem"
-          options={{ title: "Add Menu Item" }}
+          options={{ 
+            title: "Add Menu Item",
+            ...TransitionPresets.ModalSlideFromBottomIOS, // Modal slide up
+            presentation: 'modal',
+            gestureEnabled: true,
+            gestureDirection: 'vertical',
+          }}
         >
           {(props) => <AddItemScreen {...props} addItem={addItem} />}
         </Stack.Screen>
 
-        {/* Filter screen - allows guests to filter menu by course */}
+        {/* Filter screen - slide from right */}
         <Stack.Screen
           name="Filter"
-          options={{ headerShown: false }}
+          options={{ 
+            headerShown: false,
+            ...TransitionPresets.SlideFromRightIOS, // Smooth slide from right
+            gestureEnabled: true,
+            gestureDirection: 'horizontal',
+          }}
         >
           {(props) => <FilterScreen {...props} menuItems={menuItems} />}
         </Stack.Screen>
