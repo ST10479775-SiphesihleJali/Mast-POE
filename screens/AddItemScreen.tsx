@@ -152,7 +152,9 @@ export default function AddItemScreen({ navigation, addItem }: Props) {
           selectedValue={course}
           onValueChange={(val) => setCourse(val as CourseType | "")}
           dropdownIconColor="#1E90FF"
-          style={styles.picker}
+          style={styles.picker}         // ADDED background fix
+          itemStyle={styles.pickerItem} // ADDED to fix Android dropdown text
+          mode="dropdown"               // ADDED for Android consistency
         >
           <Picker.Item
             label="-- Select a course --"
@@ -195,6 +197,14 @@ const styles = StyleSheet.create({
     borderColor: "#1E90FF",
     borderRadius: 8,
     marginBottom: 20,
+    backgroundColor: "#121212", // FIXED: ensures Android dropdown isn't white
   },
-  picker: { color: "#fff" },
+  picker: {
+    color: "#fff",
+    backgroundColor: "#121212", // FIXED
+  },
+  pickerItem: {
+    color: "#fff",
+    backgroundColor: "#121212", // FIXED
+  },
 });

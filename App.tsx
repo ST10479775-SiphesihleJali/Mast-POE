@@ -163,6 +163,9 @@ export default function App() {
   useEffect(() => {
     const loadItems = async () => {
       try {
+        // TEMPORARY: Clear storage to update to new initial dishes
+        // Remove this line after confirming the new lemon tart image appears
+        await AsyncStorage.removeItem(STORAGE_KEY);
         
         const stored = await AsyncStorage.getItem(STORAGE_KEY);
         if (stored) {
@@ -212,24 +215,106 @@ export default function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator screenOptions={defaultScreenOptions}>
-        {/* Welcome screen - first screen with fade transition */}
+        {/* Welcome screen - dramatic scale and fade entrance */}
         <Stack.Screen
           name="Welcome"
           component={WelcomeScreen}
           options={{ 
             headerShown: false,
-            ...TransitionPresets.FadeFromBottomAndroid, // Elegant fade-in
+            ...TransitionPresets.ModalPresentationIOS, // Dramatic modal presentation
+            cardStyleInterpolator: ({ current: { progress } }) => ({
+              cardStyle: {
+                opacity: progress.interpolate({
+                  inputRange: [0, 1],
+                  outputRange: [0, 1],
+                }),
+                transform: [
+                  {
+                    scale: progress.interpolate({
+                      inputRange: [0, 1],
+                      outputRange: [0.8, 1], // Zoom in effect
+                    }),
+                  },
+                ],
+              },
+            }),
+            transitionSpec: {
+              open: {
+                animation: 'timing',
+                config: {
+                  duration: 500, // Slower, more dramatic
+                },
+              },
+              close: {
+                animation: 'timing',
+                config: {
+                  duration: 300,
+                },
+              },
+            },
           }}
         />
         
-        {/* Home screen - displays menu items with slide from right */}
+        {/* Home screen - rotating slide in from right */}
         <Stack.Screen 
           name="Home" 
           options={{ 
             title: "Christoffel's Menu",
-            ...TransitionPresets.SlideFromRightIOS, // Native slide from right
             gestureEnabled: true,
             gestureDirection: 'horizontal',
+            cardStyleInterpolator: ({ current, layouts }) => {
+              return {
+                cardStyle: {
+                  transform: [
+                    {
+                      translateX: current.progress.interpolate({
+                        inputRange: [0, 1],
+                        outputRange: [layouts.screen.width, 0], // Slide from right
+                      }),
+                    },
+                    {
+                      rotateY: current.progress.interpolate({
+                        inputRange: [0, 1],
+                        outputRange: ['45deg', '0deg'], // 3D rotate effect
+                      }),
+                    },
+                    {
+                      scale: current.progress.interpolate({
+                        inputRange: [0, 1],
+                        outputRange: [0.85, 1], // Slight zoom
+                      }),
+                    },
+                  ],
+                },
+                overlayStyle: {
+                  opacity: current.progress.interpolate({
+                    inputRange: [0, 1],
+                    outputRange: [0, 0.5],
+                  }),
+                },
+              };
+            },
+            transitionSpec: {
+              open: {
+                animation: 'spring',
+                config: {
+                  stiffness: 80,
+                  damping: 20,
+                  mass: 1,
+                  overshootClamping: false,
+                  restDisplacementThreshold: 0.01,
+                  restSpeedThreshold: 0.01,
+                },
+              },
+              close: {
+                animation: 'spring',
+                config: {
+                  stiffness: 100,
+                  damping: 25,
+                  mass: 1,
+                },
+              },
+            },
           }}
         >
           {(props) => (
@@ -237,28 +322,116 @@ export default function App() {
           )}
         </Stack.Screen>
         
-        {/* Add Item screen - modal slide up from bottom */}
+        {/* Add Item screen - bouncy slide up with scale */}
         <Stack.Screen
           name="AddItem"
           options={{ 
             title: "Add Menu Item",
-            ...TransitionPresets.ModalSlideFromBottomIOS, // Modal slide up
             presentation: 'modal',
             gestureEnabled: true,
             gestureDirection: 'vertical',
+            cardStyleInterpolator: ({ current, layouts }) => {
+              return {
+                cardStyle: {
+                  transform: [
+                    {
+                      translateY: current.progress.interpolate({
+                        inputRange: [0, 1],
+                        outputRange: [layouts.screen.height, 0], // Slide from bottom
+                      }),
+                    },
+                    {
+                      scale: current.progress.interpolate({
+                        inputRange: [0, 0.5, 1],
+                        outputRange: [0.7, 1.05, 1], // Bounce effect
+                      }),
+                    },
+                  ],
+                },
+                overlayStyle: {
+                  opacity: current.progress.interpolate({
+                    inputRange: [0, 1],
+                    outputRange: [0, 0.7],
+                  }),
+                },
+              };
+            },
+            transitionSpec: {
+              open: {
+                animation: 'spring',
+                config: {
+                  stiffness: 90,
+                  damping: 18,
+                  mass: 0.8,
+                  overshootClamping: false,
+                  restDisplacementThreshold: 0.01,
+                  restSpeedThreshold: 0.01,
+                },
+              },
+              close: {
+                animation: 'spring',
+                config: {
+                  stiffness: 120,
+                  damping: 22,
+                  mass: 0.8,
+                },
+              },
+            },
           }}
         >
           {(props) => <AddItemScreen {...props} addItem={addItem} />}
         </Stack.Screen>
 
-        {/* Filter screen - slide from right */}
+        {/* Filter screen - flip and slide from right */}
         <Stack.Screen
           name="Filter"
           options={{ 
             headerShown: false,
-            ...TransitionPresets.SlideFromRightIOS, // Smooth slide from right
             gestureEnabled: true,
             gestureDirection: 'horizontal',
+            cardStyleInterpolator: ({ current, layouts }) => {
+              return {
+                cardStyle: {
+                  transform: [
+                    {
+                      translateX: current.progress.interpolate({
+                        inputRange: [0, 1],
+                        outputRange: [layouts.screen.width, 0], // Slide from right
+                      }),
+                    },
+                    {
+                      rotateY: current.progress.interpolate({
+                        inputRange: [0, 1],
+                        outputRange: ['90deg', '0deg'], // Flip effect
+                      }),
+                    },
+                  ],
+                  opacity: current.progress.interpolate({
+                    inputRange: [0, 0.5, 1],
+                    outputRange: [0, 0.5, 1], // Fade in gradually
+                  }),
+                },
+              };
+            },
+            transitionSpec: {
+              open: {
+                animation: 'spring',
+                config: {
+                  stiffness: 70,
+                  damping: 20,
+                  mass: 1.2,
+                  overshootClamping: false,
+                  restDisplacementThreshold: 0.01,
+                  restSpeedThreshold: 0.01,
+                },
+              },
+              close: {
+                animation: 'timing',
+                config: {
+                  duration: 250,
+                },
+              },
+            },
           }}
         >
           {(props) => <FilterScreen {...props} menuItems={menuItems} />}
