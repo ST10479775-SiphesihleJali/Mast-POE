@@ -276,7 +276,8 @@ npx react-native run-ios
 
 ##  Video Demonstration
 
-[Link to YouTube video will be added here - showing all features including:
+https://youtube.com/shorts/PfTD514BwaY?si=Uwe7mUS5Dgn2G62o
+
 - Adding menu items
 - Viewing complete menu
 - Deleting items
