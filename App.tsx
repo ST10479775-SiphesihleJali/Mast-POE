@@ -2,17 +2,18 @@ import React, { useState, useEffect } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import {
   createStackNavigator,
-  TransitionPresets,
   StackNavigationOptions,
 } from "@react-navigation/stack";
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Easing } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
 import WelcomeScreen from "./screens/WelcomeScreen";
 import HomeScreen from "./screens/HomeScreen";
 import AddItemScreen from "./screens/AddItemScreen";
 import FilterScreen from "./screens/FilterScreen";
 
-// TypeScript type definitions
-export type CourseType = 'Starters' | 'Mains' | 'Desserts';
+// Type Definitions
+export type CourseType = "Starters" | "Mains" | "Desserts";
 
 export type MenuItem = {
   id: string;
@@ -23,24 +24,6 @@ export type MenuItem = {
   image?: string;
 };
 
-/* Code Attribution
-   Author: React Navigation Team
-   Title: Stack Navigator with TransitionPresets - React Navigation Documentation
-   Date Published: 2024
-   Link/URL: https://reactnavigation.org/docs/stack-navigator/
-   Date Accessed: 2024-10-22
-   Description: Used for implementing stack navigation with custom transition animations
-*/
-
-/* Code Attribution
-   Author: React Navigation Team
-   Title: NavigationContainer - React Navigation Documentation
-   Date Published: 2024
-   Link/URL: https://reactnavigation.org/docs/navigation-container/
-   Date Accessed: 2024-10-22
-   Description: Used NavigationContainer as the wrapper for the navigation tree
-*/
-
 export type RootStackParamList = {
   Welcome: undefined;
   Home: undefined;
@@ -49,11 +32,9 @@ export type RootStackParamList = {
 };
 
 const Stack = createStackNavigator<RootStackParamList>();
-
-const STORAGE_KEY = '@menu_items';
+const STORAGE_KEY = "@menu_items";
 
 export default function App() {
-  // State to manage menu items with initial data - 3 starters, 3 mains, 3 desserts
   const [menuItems, setMenuItems] = useState<MenuItem[]>([
     // Starters
     {
@@ -77,26 +58,28 @@ export default function App() {
     {
       id: "3",
       name: "Caesar Salad",
-      description: "Crisp romaine with parmesan, croutons, and anchovy dressing.",
+      description:
+        "Crisp romaine with parmesan, croutons, and anchovy dressing.",
       course: "Starters",
       price: 95,
       image:
         "https://images.unsplash.com/photo-1546793665-c74683f339c1?auto=format&fit=crop&w=800&q=80",
     },
+
     // Mains
     {
       id: "4",
       name: "Grilled Salmon",
-      description: "Fresh salmon with lemon butter sauce and seasonal vegetables.",
+      description: "Fresh salmon with lemon butter sauce.",
       course: "Mains",
       price: 180,
       image:
-        "https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=870",
+        "https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?auto=format&fit=crop&q=80&w=870",
     },
     {
       id: "5",
       name: "Beef Fillet",
-      description: "Tender beef fillet with red wine jus and truffle mash.",
+      description: "Tender beef fillet with red wine jus.",
       course: "Mains",
       price: 245,
       image:
@@ -105,26 +88,27 @@ export default function App() {
     {
       id: "6",
       name: "Chicken Supreme",
-      description: "Pan-seared chicken breast with mushroom cream sauce.",
+      description: "Pan-seared chicken with mushroom cream sauce.",
       course: "Mains",
       price: 165,
       image:
         "https://images.unsplash.com/photo-1598103442097-8b74394b95c6?auto=format&fit=crop&w=800&q=80",
     },
+
     // Desserts
     {
       id: "7",
       name: "Crème Brûlée",
-      description: "Classic French dessert with a caramelized sugar top.",
+      description: "Classic dessert with caramelized sugar.",
       course: "Desserts",
       price: 90,
       image:
-        "https://images.unsplash.com/photo-1615235739538-95040f341ba8?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=464",
+        "https://images.unsplash.com/photo-1615235739538-95040f341ba8?auto=format&fit=crop&w=464",
     },
     {
       id: "8",
       name: "Chocolate Fondant",
-      description: "Warm chocolate cake with molten center and vanilla ice cream.",
+      description: "Warm chocolate cake with molten center.",
       course: "Desserts",
       price: 105,
       image:
@@ -133,106 +117,71 @@ export default function App() {
     {
       id: "9",
       name: "Lemon Tart",
-      description: "Tangy lemon curd in a buttery pastry shell with meringue.",
+      description: "Tangy lemon curd with meringue.",
       course: "Desserts",
       price: 85,
       image:
-        "https://images.unsplash.com/photo-1543508185-225c92847541?q=80&w=870&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        "https://images.unsplash.com/photo-1543508185-225c92847541?q=80&w=870&auto=format&fit=crop",
     },
   ]);
 
-  /* Code Attribution
-     Author: Unsplash
-     Title: Free Stock Photos
-     Date Published: 2024
-     Link/URL: https://unsplash.com/
-     Date Accessed: 2024-10-22
-     Description: Used Unsplash image URLs for default menu item images
-  */
-
-  /* Code Attribution
-     Author: React Native Community
-     Title: AsyncStorage - React Native Async Storage
-     Date Published: 2024
-     Link/URL: https://react-native-async-storage.github.io/async-storage/
-     Date Accessed: 2024-10-22
-     Description: Used AsyncStorage for persisting menu items data locally
-  */
-
-  // Load items from storage on mount
+  // Load from AsyncStorage
   useEffect(() => {
     const loadItems = async () => {
       try {
-        // TEMPORARY: Clear storage to update to new initial dishes
-        // Remove this line after confirming the new lemon tart image appears
-        await AsyncStorage.removeItem(STORAGE_KEY);
-        
         const stored = await AsyncStorage.getItem(STORAGE_KEY);
         if (stored) {
-          const parsedItems = JSON.parse(stored);
-          // Only load from storage if it has items, otherwise keep initial data
-          if (parsedItems && parsedItems.length > 0) {
-            setMenuItems(parsedItems);
-          }
+          const parsed = JSON.parse(stored);
+          if (parsed.length > 0) setMenuItems(parsed);
         }
-      } catch (error) {
-        console.error('Error loading items:', error);
+      } catch (e) {
+        console.error("Error loading items:", e);
       }
     };
     loadItems();
   }, []);
 
-  // Save items to storage whenever they change
+  // Save to AsyncStorage
   useEffect(() => {
-    const saveItems = async () => {
-      try {
-        await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(menuItems));
-      } catch (error) {
-        console.error('Error saving items:', error);
-      }
-    };
-    saveItems();
+    AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(menuItems)).catch((e) =>
+      console.error("Error saving:", e)
+    );
   }, [menuItems]);
 
-  // Function to add new menu items
-  const addItem = (item: MenuItem) => {
-    setMenuItems((prev) => [...prev, item]);
-  };
-
-  // Function to delete menu items by id
-  const deleteItem = (id: string) => {
+  const addItem = (i: MenuItem) => setMenuItems((prev) => [...prev, i]);
+  const deleteItem = (id: string) =>
     setMenuItems((prev) => prev.filter((item) => item.id !== id));
-  };
 
-  // Default screen options with shared styling
-  const defaultScreenOptions: StackNavigationOptions = {
+  const defaultOptions: StackNavigationOptions = {
     headerStyle: { backgroundColor: "#121212" },
     headerTintColor: "#fff",
     cardStyle: { backgroundColor: "#121212" },
-    gestureEnabled: true,
   };
 
   return (
     <NavigationContainer>
-      <Stack.Navigator screenOptions={defaultScreenOptions}>
-        {/* Welcome screen - dramatic scale and fade entrance */}
+      <Stack.Navigator screenOptions={defaultOptions}>
+
+        {/* WELCOME — Fast Cinematic Reveal */}
         <Stack.Screen
           name="Welcome"
           component={WelcomeScreen}
-          options={{ 
+          options={{
             headerShown: false,
-            ...TransitionPresets.ModalPresentationIOS, // Dramatic modal presentation
-            cardStyleInterpolator: ({ current: { progress } }) => ({
+            cardStyleInterpolator: ({ current }) => ({
               cardStyle: {
-                opacity: progress.interpolate({
-                  inputRange: [0, 1],
-                  outputRange: [0, 1],
-                }),
+                opacity: current.progress,
                 transform: [
                   {
-                    scale: progress.interpolate({
+                    scale: current.progress.interpolate({
                       inputRange: [0, 1],
-                      outputRange: [0.8, 1], // Zoom in effect
+                      outputRange: [0.92, 1],
+                    }),
+                  },
+                  {
+                    translateY: current.progress.interpolate({
+                      inputRange: [0, 1],
+                      outputRange: [20, 0],
                     }),
                   },
                 ],
@@ -240,79 +189,55 @@ export default function App() {
             }),
             transitionSpec: {
               open: {
-                animation: 'timing',
-                config: {
-                  duration: 500, // Slower, more dramatic
-                },
+                animation: "timing",
+                config: { duration: 320, easing: Easing.out(Easing.cubic) },
               },
               close: {
-                animation: 'timing',
-                config: {
-                  duration: 300,
-                },
+                animation: "timing",
+                config: { duration: 220, easing: Easing.out(Easing.cubic) },
               },
             },
           }}
         />
-        
-        {/* Home screen - rotating slide in from right */}
-        <Stack.Screen 
-          name="Home" 
-          options={{ 
+
+        {/* HOME — Fast Slide + Soft Rotate */}
+        <Stack.Screen
+          name="Home"
+          options={{
             title: "Christoffel's Menu",
-            gestureEnabled: true,
-            gestureDirection: 'horizontal',
-            cardStyleInterpolator: ({ current, layouts }) => {
-              return {
-                cardStyle: {
-                  transform: [
-                    {
-                      translateX: current.progress.interpolate({
-                        inputRange: [0, 1],
-                        outputRange: [layouts.screen.width, 0], // Slide from right
-                      }),
-                    },
-                    {
-                      rotateY: current.progress.interpolate({
-                        inputRange: [0, 1],
-                        outputRange: ['45deg', '0deg'], // 3D rotate effect
-                      }),
-                    },
-                    {
-                      scale: current.progress.interpolate({
-                        inputRange: [0, 1],
-                        outputRange: [0.85, 1], // Slight zoom
-                      }),
-                    },
-                  ],
-                },
-                overlayStyle: {
-                  opacity: current.progress.interpolate({
-                    inputRange: [0, 1],
-                    outputRange: [0, 0.5],
-                  }),
-                },
-              };
-            },
+            cardStyleInterpolator: ({ current, layouts }) => ({
+              cardStyle: {
+                transform: [
+                  {
+                    translateX: current.progress.interpolate({
+                      inputRange: [0, 1],
+                      outputRange: [layouts.screen.width * 0.5, 0],
+                    }),
+                  },
+                  {
+                    rotateY: current.progress.interpolate({
+                      inputRange: [0, 1],
+                      outputRange: ["35deg", "0deg"],
+                    }),
+                  },
+                  {
+                    scale: current.progress.interpolate({
+                      inputRange: [0, 1],
+                      outputRange: [0.95, 1],
+                    }),
+                  },
+                ],
+                opacity: current.progress,
+              },
+            }),
             transitionSpec: {
               open: {
-                animation: 'spring',
-                config: {
-                  stiffness: 80,
-                  damping: 20,
-                  mass: 1,
-                  overshootClamping: false,
-                  restDisplacementThreshold: 0.01,
-                  restSpeedThreshold: 0.01,
-                },
+                animation: "timing",
+                config: { duration: 360, easing: Easing.out(Easing.cubic) },
               },
               close: {
-                animation: 'spring',
-                config: {
-                  stiffness: 100,
-                  damping: 25,
-                  mass: 1,
-                },
+                animation: "timing",
+                config: { duration: 260, easing: Easing.out(Easing.cubic) },
               },
             },
           }}
@@ -321,60 +246,53 @@ export default function App() {
             <HomeScreen {...props} menuItems={menuItems} deleteItem={deleteItem} />
           )}
         </Stack.Screen>
-        
-        {/* Add Item screen - bouncy slide up with scale */}
+
+        {/* ADD ITEM — Fast Cinematic Slide Up */}
         <Stack.Screen
           name="AddItem"
-          options={{ 
-            title: "Add Menu Item",
-            presentation: 'modal',
+          options={{
+            headerShown: false,
             gestureEnabled: true,
-            gestureDirection: 'vertical',
-            cardStyleInterpolator: ({ current, layouts }) => {
-              return {
-                cardStyle: {
-                  transform: [
-                    {
-                      translateY: current.progress.interpolate({
-                        inputRange: [0, 1],
-                        outputRange: [layouts.screen.height, 0], // Slide from bottom
-                      }),
-                    },
-                    {
-                      scale: current.progress.interpolate({
-                        inputRange: [0, 0.5, 1],
-                        outputRange: [0.7, 1.05, 1], // Bounce effect
-                      }),
-                    },
-                  ],
-                },
-                overlayStyle: {
-                  opacity: current.progress.interpolate({
-                    inputRange: [0, 1],
-                    outputRange: [0, 0.7],
-                  }),
-                },
-              };
-            },
+            gestureDirection: "vertical",
+
+            cardStyleInterpolator: ({ current, layouts }) => ({
+              cardStyle: {
+                opacity: current.progress.interpolate({
+                  inputRange: [0, 1],
+                  outputRange: [0.3, 1],
+                }),
+                transform: [
+                  {
+                    translateY: current.progress.interpolate({
+                      inputRange: [0, 1],
+                      outputRange: [layouts.screen.height * 0.45, 0],
+                    }),
+                  },
+                  {
+                    scale: current.progress.interpolate({
+                      inputRange: [0, 1],
+                      outputRange: [0.95, 1],
+                    }),
+                  },
+                ],
+              },
+              overlayStyle: {
+                opacity: current.progress.interpolate({
+                  inputRange: [0, 1],
+                  outputRange: [0, 0.5],
+                }),
+                backgroundColor: "rgba(0,0,0,0.6)",
+              },
+            }),
+
             transitionSpec: {
               open: {
-                animation: 'spring',
-                config: {
-                  stiffness: 90,
-                  damping: 18,
-                  mass: 0.8,
-                  overshootClamping: false,
-                  restDisplacementThreshold: 0.01,
-                  restSpeedThreshold: 0.01,
-                },
+                animation: "timing",
+                config: { duration: 340, easing: Easing.out(Easing.cubic) },
               },
               close: {
-                animation: 'spring',
-                config: {
-                  stiffness: 120,
-                  damping: 22,
-                  mass: 0.8,
-                },
+                animation: "timing",
+                config: { duration: 260, easing: Easing.out(Easing.cubic) },
               },
             },
           }}
@@ -382,60 +300,59 @@ export default function App() {
           {(props) => <AddItemScreen {...props} addItem={addItem} />}
         </Stack.Screen>
 
-        {/* Filter screen - flip and slide from right */}
+        {/* FILTER — Fast Cinematic Flip */}
         <Stack.Screen
           name="Filter"
-          options={{ 
+          options={{
             headerShown: false,
-            gestureEnabled: true,
-            gestureDirection: 'horizontal',
-            cardStyleInterpolator: ({ current, layouts }) => {
-              return {
-                cardStyle: {
-                  transform: [
-                    {
-                      translateX: current.progress.interpolate({
-                        inputRange: [0, 1],
-                        outputRange: [layouts.screen.width, 0], // Slide from right
-                      }),
-                    },
-                    {
-                      rotateY: current.progress.interpolate({
-                        inputRange: [0, 1],
-                        outputRange: ['90deg', '0deg'], // Flip effect
-                      }),
-                    },
-                  ],
-                  opacity: current.progress.interpolate({
-                    inputRange: [0, 0.5, 1],
-                    outputRange: [0, 0.5, 1], // Fade in gradually
-                  }),
-                },
-              };
-            },
+            cardStyleInterpolator: ({ current, layouts }) => ({
+              cardStyle: {
+                opacity: current.progress,
+                transform: [
+                  {
+                    translateX: current.progress.interpolate({
+                      inputRange: [0, 1],
+                      outputRange: [layouts.screen.width * 0.5, 0],
+                    }),
+                  },
+                  {
+                    rotateY: current.progress.interpolate({
+                      inputRange: [0, 1],
+                      outputRange: ["35deg", "0deg"],
+                    }),
+                  },
+                  {
+                    scale: current.progress.interpolate({
+                      inputRange: [0, 1],
+                      outputRange: [0.95, 1],
+                    }),
+                  },
+                ],
+              },
+              overlayStyle: {
+                opacity: current.progress.interpolate({
+                  inputRange: [0, 1],
+                  outputRange: [0, 0.45],
+                }),
+                backgroundColor: "rgba(0,0,0,0.6)",
+              },
+            }),
+
             transitionSpec: {
               open: {
-                animation: 'spring',
-                config: {
-                  stiffness: 70,
-                  damping: 20,
-                  mass: 1.2,
-                  overshootClamping: false,
-                  restDisplacementThreshold: 0.01,
-                  restSpeedThreshold: 0.01,
-                },
+                animation: "timing",
+                config: { duration: 360, easing: Easing.out(Easing.cubic) },
               },
               close: {
-                animation: 'timing',
-                config: {
-                  duration: 250,
-                },
+                animation: "timing",
+                config: { duration: 260, easing: Easing.out(Easing.cubic) },
               },
             },
           }}
         >
           {(props) => <FilterScreen {...props} menuItems={menuItems} />}
         </Stack.Screen>
+
       </Stack.Navigator>
     </NavigationContainer>
   );

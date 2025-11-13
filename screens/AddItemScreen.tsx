@@ -7,8 +7,8 @@ import {
   StyleSheet,
   Alert,
   ScrollView,
+  TouchableOpacity,
 } from "react-native";
-// Picker component for dropdown selection
 import { Picker } from "@react-native-picker/picker";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList, MenuItem, CourseType } from "../App";
@@ -46,59 +46,56 @@ interface Props {
    Description: Used core components including View, Text, TextInput, Button, StyleSheet, Alert, and ScrollView
 */
 
-// Helper function to validate image URLs
 const isValidUrl = (url: string): boolean => {
-  if (!url) return true; // Empty URL is valid (will use default)
+  if (!url) return true;
   try {
     const urlObj = new URL(url);
-    return urlObj.protocol === 'http:' || urlObj.protocol === 'https:';
+    return urlObj.protocol === "http:" || urlObj.protocol === "https:";
   } catch {
     return false;
   }
 };
 
 export default function AddItemScreen({ navigation, addItem }: Props) {
-  // State management for form inputs
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [price, setPrice] = useState("");
   const [course, setCourse] = useState<CourseType | "">("");
   const [image, setImage] = useState("");
 
-  // Form submission handler with validation
   const handleSubmit = () => {
-    // Trim all text inputs
     const trimmedName = name.trim();
     const trimmedDescription = description.trim();
     const trimmedImage = image.trim();
 
-    // Check required fields
     if (!trimmedName || !trimmedDescription || !price || !course) {
       Alert.alert("Error", "Please fill in all required fields.");
       return;
     }
 
-    // Validate price
     const parsedPrice = parseFloat(price);
     if (isNaN(parsedPrice) || parsedPrice <= 0) {
       Alert.alert("Error", "Please enter a valid price greater than 0.");
       return;
     }
 
-    // Validate image URL if provided
     if (trimmedImage && !isValidUrl(trimmedImage)) {
-      Alert.alert("Error", "Please enter a valid image URL (starting with http:// or https://).");
+      Alert.alert(
+        "Error",
+        "Please enter a valid image URL (starting with http:// or https://)."
+      );
       return;
     }
 
-    // Create new menu item object with improved ID generation
     const newItem: MenuItem = {
       id: `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
       name: trimmedName,
       description: trimmedDescription,
       course: course as CourseType,
       price: parsedPrice,
-      image: trimmedImage || "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=800&q=80",
+      image:
+        trimmedImage ||
+        "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=800&q=80",
     };
 
     addItem(newItem);
@@ -107,9 +104,25 @@ export default function AddItemScreen({ navigation, addItem }: Props) {
 
   return (
     <ScrollView style={styles.container}>
-      <Text style={styles.header}>Add New Dish</Text>
+      
+      {/* Custom Header */}
+      <View style={styles.header}>
+        <TouchableOpacity
+          onPress={() => navigation.goBack()}
+          style={{ flexDirection: "row", alignItems: "center", padding: 5 }}
+        >
+          <Text style={{ color: "#1E90FF", fontSize: 18, marginRight: 2 }}>←</Text>
+          <Text style={{ color: "#1E90FF", fontSize: 16, fontWeight: "600" }}>
+            Back
+          </Text>
+        </TouchableOpacity>
 
-      {/* Text input for dish name */}
+        <Text style={styles.headerTitle}>Add New Dish</Text>
+
+        <View style={{ width: 50 }} />
+      </View>
+
+      {/* Form Fields */}
       <TextInput
         style={styles.input}
         placeholder="Dish Name"
@@ -117,8 +130,7 @@ export default function AddItemScreen({ navigation, addItem }: Props) {
         value={name}
         onChangeText={setName}
       />
-      
-      {/* Text input for description */}
+
       <TextInput
         style={styles.input}
         placeholder="Description"
@@ -126,8 +138,7 @@ export default function AddItemScreen({ navigation, addItem }: Props) {
         value={description}
         onChangeText={setDescription}
       />
-      
-      {/* Numeric input for price */}
+
       <TextInput
         style={styles.input}
         placeholder="Price (R)"
@@ -136,8 +147,7 @@ export default function AddItemScreen({ navigation, addItem }: Props) {
         value={price}
         onChangeText={setPrice}
       />
-      
-      {/* Optional image URL input */}
+
       <TextInput
         style={styles.input}
         placeholder="Image URL (optional)"
@@ -146,44 +156,46 @@ export default function AddItemScreen({ navigation, addItem }: Props) {
         onChangeText={setImage}
       />
 
-      {/* Picker component for course selection */}
+      {/* Picker FIXED */}
       <View style={styles.pickerContainer}>
         <Picker
           selectedValue={course}
           onValueChange={(val) => setCourse(val as CourseType | "")}
           dropdownIconColor="#1E90FF"
-          style={styles.picker}         // ADDED background fix
-          itemStyle={styles.pickerItem} // ADDED to fix Android dropdown text
-          mode="dropdown"               // ADDED for Android consistency
+          style={styles.picker}
+          mode="dropdown"
         >
-          <Picker.Item
-            label="-- Select a course --"
-            value=""
-            color="#999"
-            enabled={false}
-          />
+          <Picker.Item label="-- Select a course --" value="" color="#999" />
           <Picker.Item label="Starters" value="Starters" color="#fff" />
           <Picker.Item label="Mains" value="Mains" color="#fff" />
           <Picker.Item label="Desserts" value="Desserts" color="#fff" />
         </Picker>
       </View>
 
-      {/* Submit button */}
       <Button title="Add Dish" color="#1E90FF" onPress={handleSubmit} />
     </ScrollView>
   );
 }
 
-// Stylesheet for component styling
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: "#121212", padding: 20 },
+
   header: {
-    color: "#fff",
-    fontSize: 24,
-    fontWeight: "bold",
-    textAlign: "center",
-    marginBottom: 20,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingTop: 50,
+    paddingBottom: 15,
   },
+
+  headerTitle: {
+    color: "#fff",
+    fontSize: 20,
+    fontWeight: "bold",
+    flex: 1,
+    textAlign: "center",
+  },
+
   input: {
     borderWidth: 1,
     borderColor: "#1E90FF",
@@ -192,19 +204,17 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     marginBottom: 10,
   },
+
   pickerContainer: {
     borderWidth: 1,
     borderColor: "#1E90FF",
     borderRadius: 8,
     marginBottom: 20,
-    backgroundColor: "#121212", // FIXED: ensures Android dropdown isn't white
+    backgroundColor: "#121212",
   },
+
   picker: {
     color: "#fff",
-    backgroundColor: "#121212", // FIXED
-  },
-  pickerItem: {
-    color: "#fff",
-    backgroundColor: "#121212", // FIXED
+    backgroundColor: "#121212",
   },
 });
